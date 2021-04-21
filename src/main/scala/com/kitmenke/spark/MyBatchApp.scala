@@ -21,9 +21,14 @@ object MyBatchApp {
       val sentences = spark.read.csv("src/main/resources/sentences.txt").as[String]
       sentences.printSchema
 
-      //val counts = ???
+      val words = sentences.flatMap(sentence => sentence.split(" ").map(x => x.toLowerCase));
+      words.printSchema()
+      val counts = words.groupBy("value").count();
+//            val counts = words.groupByKey(identity).count()
 
-      //counts.foreach(wordCount=>println(wordCount))
+
+      counts.foreach(wordCount=>println(wordCount))
+
     } catch {
       case e: Exception => logger.error(s"$jobName error in main", e)
     }
